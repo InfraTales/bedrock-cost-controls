@@ -19,10 +19,10 @@ test('geo profiles cost 10% more than global', () => {
 
 test('the printed table has the numbers the docs quote', () => {
   expect(table()).toEqual([
-    ['Everything on Sonnet 5, no caching, geo profile', 7260],
-    ['Everything on Sonnet 5, no caching', 6600],
+    ['Everything on Sonnet 5.5, no caching, geo profile', 7260],
+    ['Everything on Sonnet 5.5, no caching', 6600],
     ['Routed 80/20, no caching', 1464],
-    ['Routed 80/20, with caching (the repo)', 1148.58],
-    ['Routed 80/20, with caching, geo profile', 1263.75],
+    ['Routed 80/20, with caching (the repo)', 1133.76],
+    ['Routed 80/20, with caching, geo profile', 1247.448],
   ]);
 });

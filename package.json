@@ -13,12 +13,13 @@
     "bundle": "ts-node scripts/bundle.ts",
     "test": "npm run bundle && jest",
     "test:int": "jest -c jest.integration.config.js",
-    "synth": "cdk synth --quiet",
+    "synth": "cdk synth --quiet -c alertEmail=alerts@example.com",
     "check": "npm run build && npm run lint && npm test && npm run synth",
     "deploy": "npm run bundle && cdk deploy",
     "destroy": "cdk destroy",
     "cost": "ts-node scripts/cost-model.ts",
-    "smoke": "ts-node scripts/smoke-test.ts"
+    "smoke": "ts-node scripts/smoke-test.ts",
+    "mutate": "ts-node scripts/mutation-check.ts"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1152.0",

@@ -19,10 +19,12 @@ export const PRICES = {
   // Claude Haiku 5.5 bills prompts over 100,000 tokens at long-context rates; the
   // gateway caps prompts far below that (see MAX_PROMPT_CHARS).
   'claude-haiku-5-5-global': { input: 0.1, output: 0.5, cacheRead: 0.01, cacheWrite: 0.125 },
-  'claude-sonnet-5-global': { input: 2.0, output: 10.0, cacheRead: 0.2, cacheWrite: 2.5 },
+  // Sonnet 5.5 cache reads cost a twentieth of input: the Bedrock pricing page says they
+  // were cut by 50% on 7 October 2026.
+  'claude-sonnet-5-5-global': { input: 2.0, output: 10.0, cacheRead: 0.1, cacheWrite: 2.5 },
   // Geographic profiles (us.*), which application inference profiles copy from here.
   'claude-haiku-5-5-geo': { input: 0.11, output: 0.55, cacheRead: 0.011, cacheWrite: 0.1375 },
-  'claude-sonnet-5-geo': { input: 2.2, output: 11.0, cacheRead: 0.22, cacheWrite: 2.75 },
+  'claude-sonnet-5-5-geo': { input: 2.2, output: 11.0, cacheRead: 0.11, cacheWrite: 2.75 },
 } as const satisfies Record<string, ModelPrice>;
 
 export type PriceKey = keyof typeof PRICES;
