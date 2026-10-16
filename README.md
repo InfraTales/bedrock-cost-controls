@@ -4,6 +4,10 @@ An AWS Lambda function in front of the Amazon Bedrock Converse API that keeps LL
 
 Everything is AWS Cloud Development Kit (CDK) v2 in TypeScript, tested against DynamoDB Local with a stubbed Bedrock client.
 
+## Architecture
+
+![Backend calls a Lambda gateway that reserves budget in DynamoDB, then calls Haiku 5.5 or Sonnet 5](docs/architecture.png)
+
 ## What it does
 
 | Control | How |
