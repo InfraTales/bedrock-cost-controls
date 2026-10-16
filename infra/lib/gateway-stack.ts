@@ -19,7 +19,7 @@ export const BUNDLE_DIR = path.join(__dirname, '..', '..', 'build', 'gateway');
 /** The two tiers. Model IDs and limits are from each model's card in the Bedrock docs. */
 export const TIERS = {
   fast: { model: 'anthropic.claude-haiku-5-5', price: 'claude-haiku-5-5', maxTokens: 1024, minCacheTokens: 512, thinking: 'off' },
-  smart: { model: 'anthropic.claude-sonnet-5', price: 'claude-sonnet-5', maxTokens: 2048, minCacheTokens: 1024, thinking: 'low' },
+  smart: { model: 'anthropic.claude-sonnet-5-5', price: 'claude-sonnet-5-5', maxTokens: 2048, minCacheTokens: 512, thinking: 'low' },
 } as const;
 
 export interface GatewayStackProps extends cdk.StackProps {
@@ -93,7 +93,7 @@ export class GatewayStack extends cdk.Stack {
       handler: 'index.handler',
       code: lambda.Code.fromAsset(BUNDLE_DIR),
       memorySize: 256,
-      // Sonnet 5 writing 2,048 tokens can take a while. The cap on output keeps it bounded.
+      // Sonnet 5.5 writing 2,048 tokens can take a while. The cap on output keeps it bounded.
       timeout: cdk.Duration.seconds(90),
       role,
       logGroup,

@@ -1,7 +1,7 @@
 import { costMicroUsd, isPriceKey, PRICES } from '../../app/src/pricing';
 
 const haiku = PRICES['claude-haiku-5-5-global'];
-const sonnet = PRICES['claude-sonnet-5-global'];
+const sonnet = PRICES['claude-sonnet-5-5-global'];
 const none = { inputTokens: 0, outputTokens: 0, cacheReadInputTokens: 0, cacheWriteInputTokens: 0 };
 
 test('one million output tokens cost the list price in micro-dollars', () => {
@@ -11,19 +11,19 @@ test('one million output tokens cost the list price in micro-dollars', () => {
 
 test('each kind of token is billed at its own rate', () => {
   const usage = { inputTokens: 1000, outputTokens: 500, cacheReadInputTokens: 2000, cacheWriteInputTokens: 1500 };
-  // 1,000 x 2 + 500 x 10 + 2,000 x 0.2 + 1,500 x 2.5
-  expect(costMicroUsd(sonnet, usage)).toBe(2000 + 5000 + 400 + 3750);
+  // 1,000 x 2 + 500 x 10 + 2,000 x 0.1 + 1,500 x 2.5
+  expect(costMicroUsd(sonnet, usage)).toBe(2000 + 5000 + 200 + 3750);
 });
 
-test('a cache read costs a tenth of plain input, a 5-minute cache write a quarter more', () => {
-  for (const p of Object.values(PRICES)) {
-    expect(p.cacheRead).toBeCloseTo(p.input / 10, 10);
+test('a cache read costs a tenth of plain input on Haiku 5.5 and a twentieth on Sonnet 5.5; a 5-minute write a quarter more', () => {
+  for (const [key, p] of Object.entries(PRICES)) {
+    expect(p.cacheRead).toBeCloseTo(p.input / (key.startsWith('claude-sonnet-5-5') ? 20 : 10), 10);
     expect(p.cacheWrite).toBeCloseTo(p.input * 1.25, 10);
   }
 });
 
 test('global profiles are cheaper than geo profiles by 10% of the global price', () => {
-  expect(PRICES['claude-sonnet-5-geo'].input).toBeCloseTo(sonnet.input * 1.1, 10);
+  expect(PRICES['claude-sonnet-5-5-geo'].input).toBeCloseTo(sonnet.input * 1.1, 10);
   expect(PRICES['claude-haiku-5-5-geo'].output).toBeCloseTo(haiku.output * 1.1, 10);
 });
 
@@ -39,7 +39,7 @@ test('float noise does not add a micro-dollar to an exact amount', () => {
 });
 
 test('isPriceKey only accepts known models', () => {
-  expect(isPriceKey('claude-sonnet-5-global')).toBe(true);
+  expect(isPriceKey('claude-sonnet-5-5-global')).toBe(true);
   expect(isPriceKey('toString')).toBe(false);
   expect(isPriceKey('gpt')).toBe(false);
 });

@@ -39,7 +39,7 @@ function perCall(price: ModelPrice, s: Scenario, outputTokens: number, cached: b
 /** Monthly cost in US dollars. */
 export function monthlyUsd(s: Scenario, profile: 'global' | 'geo' = 'global'): number {
   const fast = PRICES[`claude-haiku-5-5-${profile}`];
-  const smart = PRICES[`claude-sonnet-5-${profile}`];
+  const smart = PRICES[`claude-sonnet-5-5-${profile}`];
   const cached = s.cacheHitRate > 0;
   const micro =
     s.requestsPerMonth * (1 - s.smartShare) * perCall(fast, s, s.fastOutputTokens, cached) +
@@ -49,8 +49,8 @@ export function monthlyUsd(s: Scenario, profile: 'global' | 'geo' = 'global'): n
 
 export function table(): [string, number][] {
   return [
-    ['Everything on Sonnet 5, no caching, geo profile', monthlyUsd({ ...BASE, smartShare: 1, cacheHitRate: 0 }, 'geo')],
-    ['Everything on Sonnet 5, no caching', monthlyUsd({ ...BASE, smartShare: 1, cacheHitRate: 0 })],
+    ['Everything on Sonnet 5.5, no caching, geo profile', monthlyUsd({ ...BASE, smartShare: 1, cacheHitRate: 0 }, 'geo')],
+    ['Everything on Sonnet 5.5, no caching', monthlyUsd({ ...BASE, smartShare: 1, cacheHitRate: 0 })],
     ['Routed 80/20, no caching', monthlyUsd({ ...BASE, cacheHitRate: 0 })],
     ['Routed 80/20, with caching (the repo)', monthlyUsd(BASE)],
     ['Routed 80/20, with caching, geo profile', monthlyUsd(BASE, 'geo')],

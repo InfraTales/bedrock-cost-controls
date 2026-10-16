@@ -10,10 +10,10 @@ export const fastModel: ModelConfig = {
 };
 
 export const smartModel: ModelConfig = {
-  modelId: 'global.anthropic.claude-sonnet-5',
-  price: PRICES['claude-sonnet-5-global'],
+  modelId: 'global.anthropic.claude-sonnet-5-5',
+  price: PRICES['claude-sonnet-5-5-global'],
   maxTokens: 2048,
-  minCacheTokens: 1024,
+  minCacheTokens: 512,
   thinking: 'low',
 };
 
@@ -30,9 +30,9 @@ export const lambdaEnv: NodeJS.ProcessEnv = {
   FAST_MAX_TOKENS: '1024',
   FAST_MIN_CACHE_TOKENS: '512',
   FAST_THINKING: 'off',
-  SMART_MODEL_ID: 'global.anthropic.claude-sonnet-5',
-  SMART_PRICE_KEY: 'claude-sonnet-5-global',
+  SMART_MODEL_ID: 'global.anthropic.claude-sonnet-5-5',
+  SMART_PRICE_KEY: 'claude-sonnet-5-5-global',
   SMART_MAX_TOKENS: '2048',
-  SMART_MIN_CACHE_TOKENS: '1024',
+  SMART_MIN_CACHE_TOKENS: '512',
   SMART_THINKING: 'low',
 };

@@ -35,7 +35,7 @@ jobs:
   dynamodb:
     # The budget store and the gateway against a real DynamoDB engine, including races.
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 25
     services:
       dynamodb:
         image: amazon/dynamodb-local:3.3.2
@@ -53,3 +53,5 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run test:int
+      # Break each budget safeguard once and check that a test notices.
+      - run: npm run mutate

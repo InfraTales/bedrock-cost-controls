@@ -1,8 +1,8 @@
 /**
  * The shared instructions every call starts with. They're identical for every user
  * and every request, which makes them the part worth caching. To be cached, the
- * prefix must reach the model's minimum (512 tokens for Claude Haiku 5.5, 1,024 for
- * Claude Sonnet 5). This one is about 1,300 tokens of English (5,296 characters).
+ * prefix must reach the model's minimum (512 tokens for both Claude Haiku 5.5 and
+ * Claude Sonnet 5.5). This one is about 1,300 tokens of English (5,296 characters).
  *
  * The product below is made up. Replace it with your own instructions.
  */

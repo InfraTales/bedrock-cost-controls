@@ -4,7 +4,7 @@ This page explains who can call what, and why we chose each setting.
 
 ## Calling the gateway
 
-The function URL uses `AWS_IAM` auth. Lambda rejects any request that isn't signed with SigV4 by a principal that has `lambda:InvokeFunctionUrl` on this function. The gateway is meant to sit behind your own backend. Your backend signs in the end user, then passes their ID in the request body.
+The function URL uses `AWS_IAM` auth. Lambda rejects any request that isn't signed with SigV4 by a principal that has both `lambda:InvokeFunctionUrl` and `lambda:InvokeFunction` on this function. The Lambda docs say function URLs created since October 2025 need both. The gateway is meant to sit behind your own backend. Your backend signs in the end user, then passes their ID in the request body.
 
 The gateway trusts that `userId`. Anyone who can call the URL can spend any user's budget, so grant the invoke permission only to the backend's role. If end users must call the gateway without a backend in between, put an authorizer in front of it (for example Amazon API Gateway with a JWT authorizer) and take the user ID from the verified token instead of the body.
 

@@ -16,9 +16,13 @@ test('the shipped system prompt is long enough to cache on both models', () => {
 });
 
 test('a short system prompt gets no cache point', () => {
-  const short = 'x'.repeat(4 * 600); // about 600 tokens: enough for Haiku 5.5, not for Sonnet 5
-  expect(shouldCache(fastModel, short)).toBe(true);
+  // Both models need 512 tokens per cache checkpoint.
+  const short = 'x'.repeat(4 * 400); // about 400 tokens
+  const enough = 'x'.repeat(4 * 512);
+  expect(shouldCache(fastModel, short)).toBe(false);
   expect(shouldCache(smartModel, short)).toBe(false);
+  expect(shouldCache(fastModel, enough)).toBe(true);
+  expect(shouldCache(smartModel, enough)).toBe(true);
 });
 
 test('the reservation covers a call that uses every output token it is allowed', () => {

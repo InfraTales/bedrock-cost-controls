@@ -6,7 +6,7 @@ Everything is AWS Cloud Development Kit (CDK) v2 in TypeScript, tested against D
 
 ## Architecture
 
-![Backend calls a Lambda gateway that reserves budget in DynamoDB, then calls Haiku 5.5 or Sonnet 5](docs/architecture.png)
+![Backend calls a Lambda gateway that reserves budget in DynamoDB, then calls Haiku 5.5 or Sonnet 5.5](docs/architecture.png)
 
 ## What it does
 
@@ -14,8 +14,8 @@ Everything is AWS Cloud Development Kit (CDK) v2 in TypeScript, tested against D
 |---|---|
 | Per-user daily budget | One DynamoDB item per user per day. A conditional write reserves the worst-case cost of a call before the call, and a second write replaces it with the real cost afterwards. |
 | Cap on each call | `maxTokens` on every request: 1,024 for the fast tier, 2,048 for the smart tier. Thinking tokens count inside that cap. |
-| Model routing | Claude Haiku 5.5 for chat, classify, extract and summarize. Claude Sonnet 5 for code, analysis and planning. A smart request the user can't afford falls back to Haiku before the gateway refuses it. |
-| Prompt caching | A cache point after the system prompt when it is long enough for the model (512 tokens for Haiku 5.5, 1,024 for Sonnet 5). |
+| Model routing | Claude Haiku 5.5 for chat, classify, extract and summarize. Claude Sonnet 5.5 for code, analysis and planning. A smart request the user can't afford falls back to Haiku before the gateway refuses it. |
+| Prompt caching | A cache point after the system prompt when it is long enough for the model (512 tokens for both Haiku 5.5 and Sonnet 5.5). |
 | Thinking | Off for the fast tier, low effort for the smart tier. Both models think by default, and thinking bills as output tokens. |
 | Metrics | Embedded Metric Format log lines: input, output and cache-read tokens and cost per tier, plus a count of refused requests. |
 | Alarms | An hourly spend alarm on the gateway's own cost metric, and an AWS Budgets monthly budget for the whole account. |
@@ -46,7 +46,9 @@ npm run cost                                      # monthly cost under the docum
 
 ## Deploy
 
-You need an AWS account bootstrapped for CDK, in a Region where the Claude Haiku 5.5 and Claude Sonnet 5 global inference profiles are available (us-east-1 is the default). Anthropic models need the one-time first use form in the Bedrock console before the first call.
+You need an AWS account bootstrapped for CDK, in a Region where the Claude Haiku 5.5 and Claude Sonnet 5.5 global inference profiles are available (us-east-1 is the default). Anthropic models need the one-time first use form in the Bedrock console before the first call.
+
+The first call to a third-party model in an account also starts its AWS Marketplace subscription. That needs `aws-marketplace:Subscribe`, `aws-marketplace:Unsubscribe` and `aws-marketplace:ViewSubscriptions` on the calling principal, and a valid payment method on the account. The gateway's role doesn't have those permissions, so invoke each model once (`global.anthropic.claude-haiku-5-5` and `global.anthropic.claude-sonnet-5-5`) from the Bedrock console playground or with an admin principal before the smoke test. Otherwise the first gateway calls can fail with `AccessDeniedException`. See [Request access to models](https://docs.aws.amazon.com/bedrock/latest/userguide/model-access.html).
 
 ```bash
 npm run deploy -- -c alertEmail=you@example.com
@@ -55,7 +57,7 @@ npm run smoke
 
 Confirm the SNS email subscription, or the alarm can't reach you. To call application inference profiles that carry cost allocation tags instead of the global profiles, add `-c costTags=true`. That mode uses the US geographic profiles, which cost 10% more, and it only works in US Regions. [docs/cost.md](docs/cost.md) explains the trade-off.
 
-`npm run destroy` removes the stack.
+`npm run destroy -- -c alertEmail=you@example.com` removes the stack. The app needs the alert email on every CDK command, and `cdk.json` has no default on purpose.
 
 ## Docs
 
@@ -65,7 +67,7 @@ Confirm the SNS email subscription, or the alarm can't reach you. To call applic
 
 ## Limits
 
-- The reservation is an estimate on the input side. It counts one token per byte of text, which is far more than any real tokenizer produces, so it errs high. Claude Haiku 5.5 and Sonnet 5 don't support the CountTokens API on the `bedrock-runtime` endpoint, so the gateway can't ask for an exact count up front.
+- The reservation is an estimate on the input side. It counts one token per byte of text, which is far more than any real tokenizer produces, so it errs high. Claude Haiku 5.5 and Sonnet 5.5 don't support the CountTokens API on the `bedrock-runtime` endpoint, so the gateway can't ask for an exact count up front.
 - If the function dies after Bedrock answers but before the settle write, the reservation stays on the user's counter for the day. That can overcharge the user's budget, but it can't undercharge it.
 - No streaming. A streamed call would need the settle step to run after the stream ends.
 

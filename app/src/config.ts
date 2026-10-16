@@ -11,7 +11,7 @@ export interface ModelConfig {
   /** Smallest prompt prefix the model will cache. Below it, a cache point does nothing. */
   minCacheTokens: number;
   /**
-   * Claude Haiku 5.5 and Sonnet 5 think by default, and thinking bills as output
+   * Claude Haiku 5.5 and Sonnet 5.5 think by default, and thinking bills as output
    * tokens. "off" turns it off; "low" keeps adaptive thinking at low effort.
    * Either way, maxTokens caps thinking plus answer together.
    */

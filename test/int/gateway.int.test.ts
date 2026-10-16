@@ -94,12 +94,12 @@ test('a smart request the user cannot afford falls back to the fast model', asyn
   expect(bedrock.commandCalls(ConverseCommand)[0]!.args[0].input.modelId).toBe('global.anthropic.claude-haiku-5-5');
 });
 
-test('a smart request that fits uses Sonnet 5 with low-effort thinking', async () => {
+test('a smart request that fits uses Sonnet 5.5 with low-effort thinking', async () => {
   bedrock.on(ConverseCommand).resolves(reply({ inputTokens: 100, outputTokens: 900, cacheWriteInputTokens: 1400 }));
   const d = deps(500_000);
   const res = await makeHandler(() => d)(post({ userId: 'u1', prompt: 'Plan a migration', task: 'planning' }));
   const body = JSON.parse(res.body);
-  // Sonnet 5 global: 100 x 2 + 900 x 10 + 1,400 x 2.5 = 200 + 9,000 + 3,500.
+  // Sonnet 5.5 global: 100 x 2 + 900 x 10 + 1,400 x 2.5 = 200 + 9,000 + 3,500.
   expect(body).toMatchObject({ tier: 'smart', costMicroUsd: 12_700 });
   const sent = bedrock.commandCalls(ConverseCommand)[0]!.args[0].input;
   expect(sent.inferenceConfig?.maxTokens).toBe(2048);

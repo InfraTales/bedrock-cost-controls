@@ -56,8 +56,8 @@ test('global mode calls global profiles and prices them as global', () => {
   expect(vars).toMatchObject({
     FAST_MODEL_ID: 'global.anthropic.claude-haiku-5-5',
     FAST_PRICE_KEY: 'claude-haiku-5-5-global',
-    SMART_MODEL_ID: 'global.anthropic.claude-sonnet-5',
-    SMART_PRICE_KEY: 'claude-sonnet-5-global',
+    SMART_MODEL_ID: 'global.anthropic.claude-sonnet-5-5',
+    SMART_PRICE_KEY: 'claude-sonnet-5-5-global',
     FAST_THINKING: 'off',
   });
   global.resourceCountIs('AWS::Bedrock::ApplicationInferenceProfile', 0);
@@ -73,15 +73,15 @@ test('global mode grants InvokeModel on exactly the three ARNs global routing ne
       'arn:aws:bedrock:us-east-1:123456789012:inference-profile/global.anthropic.claude-haiku-5-5',
       'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-haiku-5-5',
       'arn:aws:bedrock:::foundation-model/anthropic.claude-haiku-5-5',
-      'arn:aws:bedrock:us-east-1:123456789012:inference-profile/global.anthropic.claude-sonnet-5',
-      'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-sonnet-5',
-      'arn:aws:bedrock:::foundation-model/anthropic.claude-sonnet-5',
+      'arn:aws:bedrock:us-east-1:123456789012:inference-profile/global.anthropic.claude-sonnet-5-5',
+      'arn:aws:bedrock:us-east-1::foundation-model/anthropic.claude-sonnet-5-5',
+      'arn:aws:bedrock:::foundation-model/anthropic.claude-sonnet-5-5',
     ].sort(),
   );
   // The Region-less model ARN only works through our profile, with the "unspecified" Region.
-  const globalModel = s.find((st) => arn(st.Resource) === 'arn:aws:bedrock:::foundation-model/anthropic.claude-sonnet-5');
+  const globalModel = s.find((st) => arn(st.Resource) === 'arn:aws:bedrock:::foundation-model/anthropic.claude-sonnet-5-5');
   expect(globalModel.Condition.StringEquals['aws:RequestedRegion']).toBe('unspecified');
-  expect(JSON.stringify(globalModel.Condition.StringEquals['bedrock:InferenceProfileArn'])).toContain('global.anthropic.claude-sonnet-5');
+  expect(JSON.stringify(globalModel.Condition.StringEquals['bedrock:InferenceProfileArn'])).toContain('global.anthropic.claude-sonnet-5-5');
 });
 
 test('no statement grants bedrock:* or a model wildcard in global mode', () => {
@@ -164,4 +164,9 @@ test('synth stops with a clear message when the bundle is missing', () => {
   } finally {
     fs.renameSync(backup, BUNDLE_DIR);
   }
+});
+
+test('cdk.json carries no default alert email, so the guard in infra/bin/app.ts can work', () => {
+  const cdkJson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', '..', 'cdk.json'), 'utf8'));
+  expect(cdkJson.context).not.toHaveProperty('alertEmail');
 });
